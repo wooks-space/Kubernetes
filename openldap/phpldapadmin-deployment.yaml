@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpldapadmin
+  namespace: openldap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phpldapadmin
+  template:
+    metadata:
+      labels:
+        app: phpldapadmin
+    spec:
+      tolerations:
+      - key: "eks.amazonaws.com/compute-type"
+        operator: "Equal"
+        value: "fargate"
+        effect: "NoSchedule"
+      containers:
+      - name: phpldapadmin
+        image: osixia/phpldapadmin:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: PHPLDAPADMIN_LDAP_HOSTS
+          value: "openldap-service"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpldapadmin-service
+  namespace: openldap
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: phpldapadmin

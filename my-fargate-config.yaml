@@ -1,0 +1,19 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: sesac-univ-cluster
+  region: ap-northeast-2
+  version: "1.28"
+fargateProfiles:
+  - name: stage-profile
+    selectors:
+      - namespace: stage  # Pods in this namespace will be scheduled on Fargate
+      - namespace: kube-system  # You can include kube-system for system workloads
+  - name: test-profile
+    selectors:
+      - namespace: prod  # Additional profile for the 'test' namespace
+      - namespace: default  # Or specify 'default' for default Fargate usage
+  - name: openldap-profile
+    selectors:
+      - namespace: openldap

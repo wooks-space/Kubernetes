@@ -1,0 +1,33 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: sesac-gateway
+  namespace: istio-gateway
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+    service.beta.kubernetes.io/aws-load-balancer-attributes: "load_balancing.cross_zone.enabled=true"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:ap-northeast-2:311141554934:certificate/568222ae-2638-4b9c-b185-f9499481b198
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+spec:
+  gatewayClassName: istio
+  listeners:
+  - name: http
+    hostname: "*.sesac-univ.click"
+    port: 80
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            shared-gateway-access: "true"
+  - name: https
+    hostname: "*.sesac-univ.click"
+    port: 443
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            shared-gateway-access: "true"

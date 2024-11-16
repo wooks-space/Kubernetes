@@ -1,0 +1,15 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: sesac-univ-route
+  namespace: sesac-univ-route
+spec:
+  parentRefs:
+  - name: sesac-univ-gateway
+    namespace: istio-gateway
+  hostnames:
+  - sso.sesac-univ.click
+  rules:
+  - backendRefs:
+    - name: sesac-univ-sso-service
+      port: 80
